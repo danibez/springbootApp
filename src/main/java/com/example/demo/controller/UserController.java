@@ -26,51 +26,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("api/v1/users")
 public class UserController {
 
-    @Autowired
-    UserService userService;
-
-    @DeleteMapping("/deleteUser/{id}")
-    public void deleteUserById(@PathVariable long id){
-        userService.deleteUser(id);
-    } 
-
-    @DeleteMapping("/deleteUser")
-    public void deleteUser(@RequestBody UserModel entity){
-        userService.deleteUser(entity.getId());
-    }
-    
-    @PutMapping("/updateUser/{id}")
-    public UserModel putMethodNameById(@PathVariable long id, @RequestBody UserModel entity) {
-        return userService.updateUser(id, entity);
-    }
-
-    @PutMapping("/updateUser")
-    public UserModel putMethodName(@RequestBody UserModel entity) {
-        return userService.updateUser(entity.getId(), entity);
-    }
-
-    @PostMapping("/newUser")
-    public UserModel addNewUser(@RequestBody UserModel entity) {        
-        return userService.createUser(entity);
-    }
-    
-    @GetMapping("/getUsers/{id}")
-    public UserModel getUserById(@PathVariable long id) {
-        UserModel client = userService.getUserById(id);
-        return client;
-    }
-
-    @GetMapping("/getAllUsers")
-    public List<UserModel> getAllUsers() {
-        List<UserModel> client = userService.getAllUsers();
-        return client;
-    } 
-
-    @PostMapping("/statusOK")
-    public ResponseEntity<String> returnStatus(@RequestBody UserModel entity) {
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @GetMapping("/hello")
     public String helloString() {
         return "Hello World";
