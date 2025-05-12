@@ -22,7 +22,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
+// Lista de Métodos - Classe de Serviço
+// MÉTODO - RETORNO - DESCRIÇÃO
+// getAllUsers() - List<UserModel> - Retorna todos os usuários
+// getUserById(Long id) - UserModel - Busca um usuário pelo ID
+// createUser(UserModel client) - UserModel - Cria um novo usuário
+// updateUser(Long id, UserModel product) - UserModel ou null - Atualiza um usuário existente
+// deleteUser(Long id) - void - Deleta um usuário pelo ID
 
 @RestController
 @RequestMapping("api/v1/users")
