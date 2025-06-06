@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/clients")
+@RequestMapping("recifeirinha/api/clients")
 public class ClientController {
 
     @Autowired
@@ -18,7 +18,7 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-    @PostMapping("/creat")
+    @PostMapping("/create")
     public ResponseEntity<Client> create(@RequestBody Client client) {
         Client created = service.createClient(client);
         return ResponseEntity.status(201).body(created);
