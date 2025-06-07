@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.client.ClientNotFoundException;
+import com.example.demo.exception.order.EmptyOrderException;
 import com.example.demo.exception.order.OrderNotFoundException;
 import com.example.demo.exception.product.ProductNotFoundException;
 import com.example.demo.exception.user.UserNotFoundException;
@@ -20,67 +22,35 @@ import java.util.List;
 @Service
 public class OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    @Autowired private OrderRepository repository;
+    @Autowired private ClientRepository clientRepository;
 
-    @Autowired
-    private ClientRepository clientRepository;
+    public Order create(Order order) {
+        if (order.getItems() == null || order.getItems().isEmpty()) {
+            throw new EmptyOrderException("Pedido deve conter pelo menos um item.");
+        }
 
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Transactional
-    public Order createOrder(Order order) {
-        // 1. Validar se o cliente existe
         Client client = clientRepository.findById(order.getClient().getId())
-                .orElseThrow(() -> new UserNotFoundException("Cliente com id " + order.getClient().getId() + " não encontrado."));
+                .orElseThrow(() -> new ClientNotFoundException("Cliente não encontrado."));
+
         order.setClient(client);
-        order.setDate(LocalDateTime.now());
-
-        // 2. Validar cada produto do pedido e configurar o relacionamento
-        for (ItemOrder item : order.getItems()) {
-            Product product = productRepository.findById(item.getProduct().getId())
-                    .orElseThrow(() -> new ProductNotFoundException("Produto com id " + item.getProduct().getId() + " não encontrado."));
-            item.setProduct(product);
-            item.setPrice(product.getPrice()); // Garante que o preço é o atual do produto
-            item.setOrder(order); // Estabelece a relação bidirecional
-        }
-
-        // 3. Configurar relacionamento com o pagamento, se houver
-        if (order.getPayment() != null) {
-            order.getPayment().setOrder(order);
-        }
-
-        return orderRepository.save(order);
+        return repository.save(order);
     }
 
-    public List<Order> findAllOrders() {
-        return orderRepository.findAll();
+    public List<Order> findAll() { return repository.findAll(); }
+
+    public Order findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new OrderNotFoundException("Pedido não encontrado."));
     }
 
-    public Order findOrderById(Long id) {
-        return orderRepository.findById(id)
-                .orElseThrow(() -> new OrderNotFoundException("Pedido com id " + id + " não encontrado."));
+    public Order update(Long id, Order order) {
+        findById(id);
+        order.setId(id);
+        return repository.save(order);
     }
 
-    @Transactional
-    public void deleteOrderById(Long id) {
-        Order order = findOrderById(id);
-        orderRepository.delete(order);
-    }
-
-    // ATENÇÃO: A lógica de 'update' de um pedido pode ser muito complexa.
-    // Esta implementação atualiza apenas o status. Alterar itens ou cliente
-    // de um pedido já feito geralmente não é uma boa prática.
-    @Transactional
-    public Order updateOrderStatus(Long id, Order orderUpdateDetails) {
-        Order existingOrder = findOrderById(id);
-
-        // Apenas o status do pedido pode ser atualizado por este método.
-        if (orderUpdateDetails.getStatus() != null) {
-            existingOrder.setStatus(orderUpdateDetails.getStatus());
-        }
-
-        return orderRepository.save(existingOrder);
+    public void delete(Long id) {
+        findById(id);
+        repository.deleteById(id);
     }
 }

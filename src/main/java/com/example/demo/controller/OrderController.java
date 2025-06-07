@@ -7,45 +7,40 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("recifeirinha/api/orders")
+@RequestMapping("/orders")
 public class OrderController {
 
     @Autowired
-    private OrderService orderService;
+    private OrderService service;
 
-    @PostMapping("create")
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        Order createdOrder = orderService.createOrder(order);
-        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<Order> create(@RequestBody Order order) {
+        Order created = service.create(order);
+        return ResponseEntity.created(URI.create("/orders/" + created.getId())).body(created);
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity<List<Order>> getAllOrders() {
-        List<Order> orders = orderService.findAllOrders();
-        return ResponseEntity.ok(orders);
+    @GetMapping
+    public ResponseEntity<List<Order>> findAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
-    @GetMapping("/getById/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
-        Order order = orderService.findOrderById(id);
-        return ResponseEntity.ok(order);
+    @GetMapping("/{id}")
+    public ResponseEntity<Order> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 
-    // Este endpoint agora atualiza apenas o STATUS de um pedido.
-    // Para refletir isso, o ideal seria usar o método PATCH.
-    // Mas mantendo PUT conforme o original.
-    @PutMapping("update/{id}")
-    public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order orderDetails) {
-        Order updatedOrder = orderService.updateOrderStatus(id, orderDetails);
-        return ResponseEntity.ok(updatedOrder);
+    @PutMapping("/{id}")
+    public ResponseEntity<Order> update(@PathVariable Long id, @RequestBody Order order) {
+        return ResponseEntity.ok(service.update(id, order));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
-        orderService.deleteOrderById(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
