@@ -6,42 +6,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("recifeirinha/api/products")
+@RequestMapping("/products")
 public class ProductController {
 
     @Autowired
-    private ProductService productService;
+    private ProductService service;
 
-    @PostMapping("create")
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product createdProduct = productService.createProduct(product);
-        return ResponseEntity.status(201).body(createdProduct);
+    @PostMapping
+    public ResponseEntity<Product> create(@RequestBody Product product) {
+        Product created = service.create(product);
+        return ResponseEntity.created(URI.create("/products/" + created.getId())).body(created);
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.findAllProducts();
-        return ResponseEntity.ok(products);
+    @GetMapping
+    public ResponseEntity<List<Product>> findAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
-    @GetMapping("/getById/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        Product product = productService.findProductById(id);
-        return ResponseEntity.ok(product);
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 
-    @PutMapping("update/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
-        Product updatedProduct = productService.updateProduct(id, productDetails);
-        return ResponseEntity.ok(updatedProduct);
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody Product product) {
+        return ResponseEntity.ok(service.update(id, product));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,13 +1,25 @@
 package com.example.demo.exception;
 
 import com.example.demo.exception.category.CategoryNotFoundException;
-import com.example.demo.exception.item.ItemOrderNotFoundException;
+import com.example.demo.exception.category.InvalidCategoryNameException;
+import com.example.demo.exception.client.ClientNotFoundException;
+import com.example.demo.exception.client.CpfAlreadyExistsException;
+import com.example.demo.exception.client.InvalidCpfException;
+import com.example.demo.exception.item.InvalidItemQuantityException;
+import com.example.demo.exception.order.EmptyOrderException;
+import com.example.demo.exception.order.InvalidOrderStatusException;
+import com.example.demo.exception.order.OrderAlreadyPaidException;
 import com.example.demo.exception.order.OrderNotFoundException;
+import com.example.demo.exception.payment.InsufficientPaymentException;
+import com.example.demo.exception.payment.InvalidPaymentStatusException;
 import com.example.demo.exception.payment.PaymentNotFoundException;
+import com.example.demo.exception.product.InvalidProductNameException;
+import com.example.demo.exception.product.InvalidProductPriceException;
 import com.example.demo.exception.product.ProductNotFoundException;
-import com.example.demo.exception.user.EmailAlreadyExistsException;
-import com.example.demo.exception.user.InvalidPasswordException;
-import com.example.demo.exception.user.UserNotFoundException;
+import com.example.demo.exception.seller.CnpjAlreadyExistsException;
+import com.example.demo.exception.seller.InvalidCnpjException;
+import com.example.demo.exception.seller.SellerHasActiveProductsException;
+import com.example.demo.exception.user.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,10 +32,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             UserNotFoundException.class,
+            CpfAlreadyExistsException.class,
+            CnpjAlreadyExistsException.class,
             CategoryNotFoundException.class,
             ProductNotFoundException.class,
             OrderNotFoundException.class,
-            ItemOrderNotFoundException.class,
             PaymentNotFoundException.class
     })
     public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException ex) {
@@ -33,7 +46,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             EmailAlreadyExistsException.class,
-            InvalidPasswordException.class
+            InvalidEmailException.class,
+            InvalidPasswordException.class,
+            InvalidPhoneException.class,
+            InvalidCpfException.class,
+            InvalidCnpjException.class,
+            SellerHasActiveProductsException.class,
+            InvalidCategoryNameException.class,
+            InvalidProductNameException.class,
+            InvalidProductPriceException.class,
+            ClientNotFoundException.class,
+            EmptyOrderException.class,
+            InvalidOrderStatusException.class,
+            OrderAlreadyPaidException.class,
+            InvalidItemQuantityException.class,
+            InvalidPaymentStatusException.class,
+            InsufficientPaymentException.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequest(RuntimeException ex) {
         ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
@@ -69,6 +97,4 @@ public class GlobalExceptionHandler {
             return timestamp;
         }
     }
-
-
 }

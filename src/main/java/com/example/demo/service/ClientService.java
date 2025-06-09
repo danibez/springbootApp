@@ -5,7 +5,6 @@ import com.example.demo.model.Client;
 import com.example.demo.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -13,33 +12,34 @@ import java.util.List;
 public class ClientService extends UserService {
 
     @Autowired
-    ClientRepository clientRepository;
+    private ClientRepository clientRepository;
 
-    public Client createClient(@RequestBody Client client) { //falta validar email unico
+    public Client create(Client client) {
         validateEmailUnique(client.getEmail());
         validatePasswordForteil(client.getPassword());
+        validatePhone(client.getPhone());
+        validateCpf(client.getCpf());
         client.setEmail(normalizeEmail(client.getEmail()));
         client.setName(capitalizeName(client.getName()));
         return clientRepository.save(client);
     }
 
-    public List<Client> finAllClients() {
+    public List<Client> finAll() {
         return clientRepository.findAll();
     }
 
-    public Client finClientById(Long id) {
+    public Client findById(Long id) {
         return clientRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Cliente não encontrado com id: " + id));
     }
     public Client update(Long id, Client client) {
-        clientRepository.findById(id);
-        client.setId(id);
+        findById(id);
         client.setEmail(normalizeEmail(client.getEmail()));
         client.setName(capitalizeName(client.getName()));
         return clientRepository.save(client);
     }
 
     public void delete(Long id) {
-        clientRepository.findById(id);
+        findById(id);
         clientRepository.deleteById(id);
     }
 
@@ -59,7 +59,4 @@ public class ClientService extends UserService {
             throw new RuntimeException("A senha fornecida está incorreta.");
         }
     }
-
-
-
 }

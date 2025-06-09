@@ -23,7 +23,7 @@ public class ClientController {
 
     @PostMapping("/create")
     public ResponseEntity<Client> create(@RequestBody Client client) {
-        Client created = service.createClient(client);
+        Client created = service.create(client);
         return ResponseEntity.status(201).body(created);
     }
 
@@ -49,12 +49,12 @@ public class ClientController {
 
     @GetMapping("/getAll")
     public ResponseEntity<List<Client>> findAll() {
-        return ResponseEntity.ok(clientService.finAllClients());
+        return ResponseEntity.ok(clientService.finAll());
     }
 
     @GetMapping("/getById/{id}")
     public ResponseEntity<Client> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(clientService.finClientById(id));
+        return ResponseEntity.ok(clientService.findById(id));
     }
 
     @PutMapping("/update/{id}")
