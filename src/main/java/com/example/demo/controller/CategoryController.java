@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("recifeirinha/api/categories") // URL base para todas as operações de categoria
+@RequestMapping("recifeirinha/api/categories")
 public class CategoryController {
 
     @Autowired

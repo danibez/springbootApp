@@ -43,5 +43,23 @@ public class ClientService extends UserService {
         clientRepository.deleteById(id);
     }
 
+    // MÉTODO DE AUTENTICAÇÃO ATUALIZADO
+    public Client authenticate(String email, String plainTextPassword) {
+        // 1. Busca o cliente pelo email normalizado
+        String normalizedEmail = normalizeEmail(email);
+        Client client = clientRepository.findByEmail(normalizedEmail)
+                // Lança uma exceção específica se o usuário não for encontrado
+                .orElseThrow(() -> new UserNotFoundException("Usuário com email '" + email + "' não encontrado."));
+
+        // 2. Se o usuário foi encontrado, verifica a senha
+        if (plainTextPassword.equals(client.getPassword())) {
+            return client; // Sucesso
+        } else {
+            // Se a senha estiver incorreta, lança outra exceção
+            throw new RuntimeException("A senha fornecida está incorreta.");
+        }
+    }
+
+
 
 }
