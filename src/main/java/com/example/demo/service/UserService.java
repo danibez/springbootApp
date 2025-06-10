@@ -31,8 +31,8 @@ public abstract class UserService {
     }
 
     protected void validatePhone (String phone) {
-        if (!phone.matches("^\\(\\d{2}\\)\\s?\\d{4,5}-?\\d{4}$")) {
-            throw new InvalidPhoneException("Telefone inválido. Ex: (81) 99999-1234");
+        if (!phone.matches("\\d{11}")) {
+            throw new InvalidPhoneException("Telefone inválido. Digite apenas números com ddd.");
         }
     }
 

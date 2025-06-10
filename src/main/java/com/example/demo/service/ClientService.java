@@ -24,7 +24,7 @@ public class ClientService extends UserService {
         return clientRepository.save(client);
     }
 
-    public List<Client> finAll() {
+    public List<Client> findAll() {
         return clientRepository.findAll();
     }
 

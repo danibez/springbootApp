@@ -18,9 +18,6 @@ import java.util.List;
 public class Client extends User {
 
     @Column(nullable = false)
-    private String phone;
-
-    @Column(nullable = false)
     private String deliveryAddress;
 
     @Column(nullable = false, unique = true)

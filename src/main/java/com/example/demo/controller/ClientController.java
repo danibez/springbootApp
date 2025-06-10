@@ -36,20 +36,20 @@ public class ClientController {
             return ResponseEntity.ok(authenticatedClient);
 
         } catch (UserNotFoundException e) {
-            // Cenário 1: Usuário não encontrado (conforme sua solicitação)
+            // Cenário 1: Usuário não encontrado
             // Retorna 404 NOT FOUND com a mensagem de erro no corpo
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 
         } catch (RuntimeException e) {
-            // Cenário 2: Senha incorreta (boa prática)
-            // O código 401 Unauthorized é mais apropriado para credenciais inválidas
+            // Cenário 2: Senha incorreta
+            // O código 401 Unauthorized é para credenciais inválidas
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
     @GetMapping("/getAll")
     public ResponseEntity<List<Client>> findAll() {
-        return ResponseEntity.ok(clientService.finAll());
+        return ResponseEntity.ok(clientService.findAll());
     }
 
     @GetMapping("/getById/{id}")
