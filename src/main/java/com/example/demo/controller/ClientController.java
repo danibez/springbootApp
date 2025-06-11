@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("recifeirinha/api/clients")
+@RequestMapping("/api/v1/clients")
 public class ClientController {
 
     @Autowired
@@ -29,22 +29,9 @@ public class ClientController {
 
     // ROTA DE LOGIN ATUALIZADA COM TRATAMENTO DE ERROS
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginData) {
-        try {
-            Client authenticatedClient = service.authenticate(loginData.getEmail(), loginData.getPassword());
-            // Caminho feliz: retorna 200 OK com os dados do cliente
-            return ResponseEntity.ok(authenticatedClient);
-
-        } catch (UserNotFoundException e) {
-            // Cenário 1: Usuário não encontrado
-            // Retorna 404 NOT FOUND com a mensagem de erro no corpo
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-
-        } catch (RuntimeException e) {
-            // Cenário 2: Senha incorreta
-            // O código 401 Unauthorized é para credenciais inválidas
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
+    public ResponseEntity<Client> login(@RequestBody LoginDTO loginData) {
+        Client authenticatedClient = service.authenticate(loginData.getEmail(), loginData.getPassword());
+        return ResponseEntity.ok(authenticatedClient);
     }
 
     @GetMapping("/getAll")
@@ -52,7 +39,7 @@ public class ClientController {
         return ResponseEntity.ok(clientService.findAll());
     }
 
-    @GetMapping("/getById/{id}")
+    @GetMapping("/getId/{id}")
     public ResponseEntity<Client> findById(@PathVariable Long id) {
         return ResponseEntity.ok(clientService.findById(id));
     }

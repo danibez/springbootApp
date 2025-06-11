@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.user.InvalidCredentialsException;
 import com.example.demo.exception.user.UserNotFoundException;
 import com.example.demo.model.Seller;
 import com.example.demo.repository.SellerRepository;
@@ -12,14 +13,13 @@ import java.util.List;
 public class SellerService extends UserService {
 
     @Autowired
-    private SellerRepository sellerRepository; // Renomeado para 'sellerRepository' para clareza
+    private SellerRepository sellerRepository;
 
-    // Corrigido: 'creat' para 'create' para padronização
     public Seller create(Seller seller) {
         validateEmailUnique(seller.getEmail());
         validatePasswordForteil(seller.getPassword());
         validatePhone(seller.getPhone());
-        validarCnpj(seller.getCnpj()); // Supondo que este método exista em UserService
+        validateCnpj(seller.getCnpj());
         seller.setEmail(normalizeEmail(seller.getEmail()));
         seller.setName(capitalizeName(seller.getName()));
         return sellerRepository.save(seller);
@@ -48,24 +48,19 @@ public class SellerService extends UserService {
     }
 
     public void delete(Long id) {
-        findById(id); // Garante que o vendedor existe antes de deletar
+        findById(id);
         sellerRepository.deleteById(id);
     }
 
     // MÉTODO DE AUTENTICAÇÃO ADICIONADO (idêntico ao de ClientService)
     public Seller authenticate(String email, String plainTextPassword) {
-        // 1. Busca o vendedor pelo email normalizado
         String normalizedEmail = normalizeEmail(email);
         Seller seller = sellerRepository.findByEmail(normalizedEmail)
-                // Lança uma exceção se o vendedor não for encontrado
                 .orElseThrow(() -> new UserNotFoundException("Vendedor com email '" + email + "' não encontrado."));
-
-        // 2. Se o vendedor foi encontrado, verifica a senha
         if (plainTextPassword.equals(seller.getPassword())) {
-            return seller; // Sucesso na autenticação
+            return seller;
         } else {
-            // Se a senha estiver incorreta, lança uma exceção
-            throw new RuntimeException("A senha fornecida está incorreta.");
+            throw new InvalidCredentialsException("A senha fornecida está incorreta.");
         }
     }
 }

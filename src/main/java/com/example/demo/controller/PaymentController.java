@@ -10,34 +10,34 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/payments")
+@RequestMapping("/api/v1/payments")
 public class PaymentController {
 
     @Autowired
     private PaymentService service;
 
-    @PostMapping
+    @PostMapping("/creat")
     public ResponseEntity<Payment> create(@RequestBody Payment payment) {
         Payment created = service.create(payment);
         return ResponseEntity.created(URI.create("/payments/" + created.getId())).body(created);
     }
 
-    @GetMapping
+    @GetMapping("/getAll")
     public ResponseEntity<List<Payment>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getId/{id}")
     public ResponseEntity<Payment> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<Payment> update(@PathVariable Long id, @RequestBody Payment payment) {
         return ResponseEntity.ok(service.update(id, payment));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();

@@ -42,7 +42,7 @@ public abstract class UserService {
         }
     }
 
-    protected void validarCnpj(String cnpj) {
+    protected void validateCnpj(String cnpj) {
         if (!cnpj.matches("\\d{14}")) {
             throw new InvalidCnpjException("CNPJ inválido. Deve conter 14 dígitos numéricos.");
         }

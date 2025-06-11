@@ -13,10 +13,12 @@ import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class ProductService {
 
     @Autowired private ProductRepository repository;
@@ -27,7 +29,7 @@ public class ProductService {
         if (product.getName() == null || product.getName().trim().isEmpty()) {
             throw new InvalidProductNameException("Nome do produto não pode ser vazio.");
         }
-        if (product.getPrice() == null || product.getPrice().doubleValue() <= 0) {
+        if (product.getPrice() == null || product.getPrice() <= 0) {
             throw new InvalidProductPriceException("Preço do produto deve ser maior que zero.");
         }
 
@@ -42,16 +44,36 @@ public class ProductService {
         return repository.save(product);
     }
 
+    @Transactional(readOnly = true)
     public List<Product> findAll() { return repository.findAll(); }
 
+    @Transactional(readOnly = true)
     public Product findById(Long id) {
         return repository.findById(id).orElseThrow(() -> new ProductNotFoundException("Produto não encontrado."));
     }
 
-    public Product update(Long id, Product product) {
-        findById(id);
-        product.setId(id);
-        return repository.save(product);
+    public Product update(Long id, Product productDetails) {
+        Product existingProduct = findById(id);
+
+        if (productDetails.getName() == null || productDetails.getName().trim().isEmpty()) {
+            throw new InvalidProductNameException("Nome do produto não pode ser vazio.");
+        }
+        if (productDetails.getPrice() == null || productDetails.getPrice() <= 0) {
+            throw new InvalidProductPriceException("Preço do produto deve ser maior que zero.");
+        }
+
+        // Se uma nova categoria for fornecida, verifique se ela existe
+        if (productDetails.getCategory() != null && productDetails.getCategory().getId() != null) {
+            Category category = categoryRepository.findById(productDetails.getCategory().getId())
+                    .orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada."));
+            existingProduct.setCategory(category);
+        }
+
+        existingProduct.setName(productDetails.getName());
+        existingProduct.setDescription(productDetails.getDescription());
+        existingProduct.setPrice(productDetails.getPrice());
+
+        return repository.save(existingProduct);
     }
 
     public void delete(Long id) {
@@ -59,4 +81,3 @@ public class ProductService {
         repository.deleteById(id);
     }
 }
-

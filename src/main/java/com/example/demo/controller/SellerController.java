@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("recifeirinha/api/sellers")
+@RequestMapping("/api/v1/sellers")
 public class SellerController {
 
     @Autowired
@@ -27,22 +27,9 @@ public class SellerController {
 
     // ROTA DE LOGIN ADICIONADA COM TRATAMENTO DE ERROS
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginData) {
-        try {
-            Seller authenticatedSeller = service.authenticate(loginData.getEmail(), loginData.getPassword());
-            // Sucesso: retorna 200 OK com os dados do vendedor
-            return ResponseEntity.ok(authenticatedSeller);
-
-        } catch (UserNotFoundException e) {
-            // Caso 1: Vendedor não encontrado
-            // Retorna 404 NOT FOUND com a mensagem de erro
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-
-        } catch (RuntimeException e) {
-            // Caso 2: Senha incorreta
-            // Retorna 401 UNAUTHORIZED (credenciais inválidas)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
+    public ResponseEntity<Seller> login(@RequestBody LoginDTO loginData) {
+        Seller authenticatedSeller = service.authenticate(loginData.getEmail(), loginData.getPassword());
+        return ResponseEntity.ok(authenticatedSeller);
     }
 
     @GetMapping("/getAll")
@@ -50,7 +37,7 @@ public class SellerController {
         return ResponseEntity.ok(service.findAll());
     }
 
-    @GetMapping("/getById/{id}")
+    @GetMapping("/getId/{id}")
     public ResponseEntity<Seller> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }

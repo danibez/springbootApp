@@ -30,22 +30,41 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // Manipulador para exceções que devem retornar 404 NOT FOUND
     @ExceptionHandler({
             UserNotFoundException.class,
-            CpfAlreadyExistsException.class,
-            CnpjAlreadyExistsException.class,
             CategoryNotFoundException.class,
             ProductNotFoundException.class,
             OrderNotFoundException.class,
             PaymentNotFoundException.class
+            // Removido Cpf/CnpjAlreadyExistsException daqui, pois 409 Conflict é mais apropriado
     })
     public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException ex) {
         ErrorResponse error = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    // NOVO MANIPULADOR PARA ERROS DE AUTENTICAÇÃO (SENHA INCORRETA)
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(InvalidCredentialsException ex) {
+        ErrorResponse error = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    // Manipulador para exceções que devem retornar 409 CONFLICT (Ex: recurso já existe)
     @ExceptionHandler({
-            EmailAlreadyExistsException.class,
+            CpfAlreadyExistsException.class,
+            CnpjAlreadyExistsException.class,
+            EmailAlreadyExistsException.class
+    })
+    public ResponseEntity<ErrorResponse> handleConflict(RuntimeException ex) {
+        ErrorResponse error = new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+
+    // Manipulador para exceções que devem retornar 400 BAD REQUEST (dados inválidos)
+    @ExceptionHandler({
             InvalidEmailException.class,
             InvalidPasswordException.class,
             InvalidPhoneException.class,
@@ -68,12 +87,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    // Manipulador genérico para qualquer outra exceção não tratada
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
+        // Logar o erro real no servidor é uma boa prática
+        ex.printStackTrace();
         ErrorResponse error = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor.");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
+    // A classe ErrorResponse continua a mesma...
     public static class ErrorResponse {
         private int status;
         private String message;
@@ -85,16 +108,8 @@ public class GlobalExceptionHandler {
             this.timestamp = LocalDateTime.now();
         }
 
-        public int getStatus() {
-            return status;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public LocalDateTime getTimestamp() {
-            return timestamp;
-        }
+        public int getStatus() { return status; }
+        public String getMessage() { return message; }
+        public LocalDateTime getTimestamp() { return timestamp; }
     }
 }
