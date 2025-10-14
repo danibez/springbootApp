@@ -14,12 +14,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserModel {
-    
+
     @Id
     @GeneratedValue
     long id;
     String username;
     String password;
     int age;
-
 }
