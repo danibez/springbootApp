@@ -9,8 +9,7 @@ import com.example.demo.model.PetModel;
 import com.example.demo.model.UserModel;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserModel, Long> {
+public interface PetRepository extends JpaRepository<PetModel, Long> {
 
-    List<PetModel> findPetsById(long id);
-    
+    List<PetModel> findByDono(UserModel dono);
 }
