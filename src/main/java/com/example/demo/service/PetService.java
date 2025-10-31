@@ -31,5 +31,9 @@ public class PetService {
         UserModel dono = userRepository.findById(id).get();
         return petRepository.findByDono(dono);
     }
+
+    public PetModel addNewPet(PetModel pet) {
+        return petRepository.save(pet);
+    }
     
 }

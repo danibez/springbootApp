@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.hibernate.annotations.ValueGenerationType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -32,6 +34,7 @@ public class PetModel {
     UserModel dono;
 
     @ManyToMany(mappedBy="pets")
+    @JsonIgnore
     List<ServicoModel> servicos;
 
 }

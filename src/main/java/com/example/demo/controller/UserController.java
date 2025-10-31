@@ -38,7 +38,7 @@ public class UserController {
         List<UserModel> response = userService.getAllUsers();
         List<UserResponseDTO> responseDTO = new ArrayList<UserResponseDTO>();
         for (int i = 0; i < response.size(); i++) {
-            responseDTO.add(new UserResponseDTO(response.get(i).getId(), response.get(i).getUsername(), response.get(i).getAge()));
+            responseDTO.add(new UserResponseDTO(response.get(i).getId(), response.get(i).getUsername(), response.get(i).getAge(), response.get(i).getPets()));
         }
         return responseDTO;
     }
@@ -52,7 +52,7 @@ public class UserController {
 
         UserModel response = userService.createUser(newUsermodel);
     
-        UserResponseDTO respDTO = new UserResponseDTO(response.getId(), response.getUsername(), response.getAge());
+        UserResponseDTO respDTO = new UserResponseDTO(response.getId(), response.getUsername(), response.getAge(), response.getPets());
 
         return respDTO;
     }

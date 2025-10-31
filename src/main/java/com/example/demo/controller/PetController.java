@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @RestController
@@ -28,6 +31,12 @@ public class PetController {
     public PetModel getPetById(@PathVariable long id) {
         return petService.getPetById(id);
     }
+
+    @PostMapping("/addPet")
+    public PetModel addNewPet(@RequestBody PetModel pet) {
+        return petService.addNewPet(pet);
+    }
+    
     
     
     
